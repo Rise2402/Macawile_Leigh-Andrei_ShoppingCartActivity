@@ -57,3 +57,97 @@ class CartItem
         Subtotal = product.Price * quantity;
     }
 }
+class Program
+{
+    static void Main()
+    {
+        Product[] menu = new Product[6];
+        menu[0] = new Product(1, "Pork Liempo", 189.00, 50);
+        menu[1] = new Product(2, "Chicken Breast", 145.00, 40);
+        menu[2] = new Product(3, "Beef Bulalo Cut", 320.00, 30);
+        menu[3] = new Product(4, "Pork Ribs", 210.00, 25);
+        menu[4] = new Product(5, "Bangus", 99.00, 35);
+        menu[5] = new Product(6, "Chicken Thigh", 130.00, 45);
+
+        CartItem[] cart = new CartItem[10];
+        int cartCount = 0;
+        string choice = "";
+
+        do
+        {
+            Console.WriteLine("\n-------- STORE MENU --------");
+            for (int i = 0; i < menu.Length; i++)
+            {
+                menu[i].DisplayProduct();
+            }
+            Console.WriteLine("----------------------------");
+
+            Console.Write("\nEnter product number: ");
+            string productnum = Console.ReadLine();
+
+            int productId;
+            bool productvalid = int.TryParse(productnum, out productId);
+
+            if (productvalid == false)
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = Console.ReadLine().ToUpper();
+                continue;
+            }
+
+            Product selected = null;
+            for (int i = 0; i < menu.Length; i++)
+            {
+                if (menu[i].Id == productId)
+                {
+                    selected = menu[i];
+                }
+            }
+
+            if (selected == null)
+            {
+                Console.WriteLine("Product not found. Please try again.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = Console.ReadLine().ToUpper();
+                continue;
+            }
+
+            if (selected.RemainingStock == 0)
+            {
+                Console.WriteLine("Sorry, " + selected.Name + " is out of stock.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = Console.ReadLine().ToUpper();
+                continue;
+            }
+
+            Console.Write("Enter quantity (available: " + selected.RemainingStock + "): ");
+            string qtyinput = Console.ReadLine();
+
+            int quantity;
+            bool validqty = int.TryParse(qtyinput, out quantity);
+
+            if (validqty == false)
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = Console.ReadLine().ToUpper();
+                continue;
+            }
+
+            if (quantity <= 0)
+            {
+                Console.WriteLine("Quantity must be greater than zero.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = Console.ReadLine().ToUpper();
+                continue;
+            }
+
+            if (selected.HasEnoughStock(quantity) == false)
+            {
+                Console.WriteLine("Not enough stock available. Only " + selected.RemainingStock + " left.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = Console.ReadLine().ToUpper();
+                continue;
+            }
+        } while (choice == "Y");
