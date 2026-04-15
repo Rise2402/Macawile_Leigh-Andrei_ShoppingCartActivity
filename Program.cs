@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 class Product
 {
@@ -57,6 +57,7 @@ class CartItem
         Subtotal = product.Price * quantity;
     }
 }
+
 class Program
 {
     static void Main()
@@ -150,4 +151,67 @@ class Program
                 choice = Console.ReadLine().ToUpper();
                 continue;
             }
+
+            // ✅ FIX: Add to cart + deduct stock
+            if (cartCount >= cart.Length)
+            {
+                Console.WriteLine("Cart is full!");
+                break;
+            }
+
+            CartItem item = new CartItem(selected, quantity);
+            cart[cartCount] = item;
+            cartCount++;
+
+            selected.DeductStock(quantity);
+
+            Console.WriteLine("Item added to cart successfully!");
+            Console.Write("Continue shopping? (Y/N): ");
+            choice = Console.ReadLine().ToUpper();
+
         } while (choice == "Y");
+
+        Console.WriteLine("\n========== RECEIPT ==========");
+        Console.WriteLine("Item                  Qty   Price       Subtotal");
+        Console.WriteLine("--------------------------------------------------");
+
+        double grandTotal = 0;
+
+        if (cartCount == 0)
+        {
+            Console.WriteLine("Your cart is empty.");
+        }
+        else
+        {
+            for (int i = 0; i < cartCount; i++)
+            {
+                Console.WriteLine(cart[i].Product.Name + "  x" + cart[i].Quantity + "  PHP " + cart[i].Product.Price.ToString("F2") + "  PHP " + cart[i].Subtotal.ToString("F2"));
+                grandTotal = grandTotal + cart[i].Subtotal;
+            }
+        }
+
+        Console.WriteLine("--------------------------------------------------");
+        Console.WriteLine("Grand Total: PHP " + grandTotal.ToString("F2"));
+
+        double discount = 0;
+        double finalTotal = grandTotal;
+
+        if (grandTotal >= 5000)
+        {
+            discount = grandTotal * 0.10;
+            finalTotal = grandTotal - discount;
+            Console.WriteLine("Discount (10%): PHP " + discount.ToString("F2"));
+        }
+
+        Console.WriteLine("Final Total: PHP " + finalTotal.ToString("F2"));
+        Console.WriteLine("=============================");
+
+        Console.WriteLine("\n--- Updated Stock ---");
+        for (int i = 0; i < menu.Length; i++)
+        {
+            menu[i].DisplayProduct();
+        }
+
+        Console.WriteLine("\nThank you for shopping!");
+    }
+}
