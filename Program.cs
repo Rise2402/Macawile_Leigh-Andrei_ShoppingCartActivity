@@ -152,7 +152,6 @@ class Program
                 continue;
             }
 
-            // ✅ FIX: Add to cart + deduct stock
             if (cartCount >= cart.Length)
             {
                 Console.WriteLine("Cart is full!");
