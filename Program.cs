@@ -76,12 +76,23 @@ class Program
 
         do
         {
-            Console.WriteLine("\n-------- STORE MENU --------");
+            Console.WriteLine("\n==============================================");
+            Console.WriteLine("                 MEAT SHOP MENU              ");
+            Console.WriteLine("==============================================");
+            Console.WriteLine(" ID   ITEM NAME           PRICE      STOCK");
+            Console.WriteLine("----------------------------------------------");
+
             for (int i = 0; i < menu.Length; i++)
             {
-                menu[i].DisplayProduct();
+                Console.WriteLine(
+                    menu[i].Id.ToString().PadRight(5) +
+                    menu[i].Name.PadRight(20) +
+                    ("PHP " + menu[i].Price.ToString("F2")).PadRight(12) +
+                    menu[i].RemainingStock
+                );
             }
-            Console.WriteLine("----------------------------");
+
+            Console.WriteLine("==============================================");
 
             Console.Write("\nEnter product number: ");
             string productnum = Console.ReadLine();
@@ -151,16 +162,34 @@ class Program
                 choice = Console.ReadLine().ToUpper();
                 continue;
             }
+            int existingIndex = -1;
 
-            if (cartCount >= cart.Length)
+            for (int i = 0; i < cartCount; i++)
             {
-                Console.WriteLine("Cart is full!");
-                break;
+                if (cart[i].Product.Id == selected.Id)
+                {
+                    existingIndex = i;
+                    break;
+                }
             }
 
-            CartItem item = new CartItem(selected, quantity);
-            cart[cartCount] = item;
-            cartCount++;
+            if (existingIndex >= 0)
+            {
+                cart[existingIndex].Quantity += quantity;
+                cart[existingIndex].Subtotal =
+                    cart[existingIndex].Product.Price * cart[existingIndex].Quantity;
+            }
+            else
+            {
+                if (cartCount >= cart.Length)
+                {
+                    Console.WriteLine("Cart is full!");
+                    break;
+                }
+
+                cart[cartCount] = new CartItem(selected, quantity);
+                cartCount++;
+            }
 
             selected.DeductStock(quantity);
 
@@ -170,27 +199,35 @@ class Program
 
         } while (choice == "Y");
 
-        Console.WriteLine("\n========== RECEIPT ==========");
-        Console.WriteLine("Item                  Qty   Price       Subtotal");
-        Console.WriteLine("--------------------------------------------------");
+        Console.WriteLine("\n==============================================");
+        Console.WriteLine("                   RECEIPT                  ");
+        Console.WriteLine("==============================================");
+        Console.WriteLine(" ITEM NAME        QTY     PRICE     SUBTOTAL");
+        Console.WriteLine("----------------------------------------------");
 
         double grandTotal = 0;
 
         if (cartCount == 0)
         {
-            Console.WriteLine("Your cart is empty.");
+            Console.WriteLine(" Your cart is empty.");
         }
         else
         {
             for (int i = 0; i < cartCount; i++)
             {
-                Console.WriteLine(cart[i].Product.Name + "  x" + cart[i].Quantity + "  PHP " + cart[i].Product.Price.ToString("F2") + "  PHP " + cart[i].Subtotal.ToString("F2"));
-                grandTotal = grandTotal + cart[i].Subtotal;
+                Console.WriteLine(
+                    cart[i].Product.Name.PadRight(18) +
+                    cart[i].Quantity.ToString().PadRight(8) +
+                    ("PHP " + cart[i].Product.Price.ToString("F2")).PadRight(11) +
+                    ("PHP " + cart[i].Subtotal.ToString("F2"))
+                );
+
+                grandTotal += cart[i].Subtotal;
             }
         }
 
-        Console.WriteLine("--------------------------------------------------");
-        Console.WriteLine("Grand Total: PHP " + grandTotal.ToString("F2"));
+        Console.WriteLine("----------------------------------------------");
+        Console.WriteLine(" TOTAL:".PadRight(35) + "PHP " + grandTotal.ToString("F2"));
 
         double discount = 0;
         double finalTotal = grandTotal;
@@ -199,11 +236,11 @@ class Program
         {
             discount = grandTotal * 0.10;
             finalTotal = grandTotal - discount;
-            Console.WriteLine("Discount (10%): PHP " + discount.ToString("F2"));
+            Console.WriteLine(" DISCOUNT (10%):".PadRight(35) + "-PHP " + discount.ToString("F2"));
         }
 
-        Console.WriteLine("Final Total: PHP " + finalTotal.ToString("F2"));
-        Console.WriteLine("=============================");
+        Console.WriteLine(" FINAL TOTAL:".PadRight(35) + "PHP " + finalTotal.ToString("F2"));
+        Console.WriteLine("==============================================");
 
         Console.WriteLine("\n--- Updated Stock ---");
         for (int i = 0; i < menu.Length; i++)
