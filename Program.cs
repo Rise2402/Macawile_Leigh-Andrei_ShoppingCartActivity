@@ -6,18 +6,20 @@ class Product
     public string Name;
     public double Price;
     public int RemainingStock;
+    public string Category;
 
-    public Product(int id, string name, double price, int stock)
+    public Product(int id, string name, double price, int stock, string category)
     {
         Id = id;
         Name = name;
         Price = price;
         RemainingStock = stock;
+        Category = category;
     }
 
     public void DisplayProduct()
     {
-        Console.WriteLine("  [" + Id + "] " + Name + "  -  PHP " + Price.ToString("F2") + "  (Stock: " + RemainingStock + ")");
+        Console.WriteLine("  [" + Id + "] " + Name + "  -  PHP " + Price.ToString("F2") + "  (Stock: " + RemainingStock + ")  [" + Category + "]");
     }
 
     public double GetItemTotal(int quantity)
@@ -42,6 +44,11 @@ class Product
     {
         RemainingStock = RemainingStock - quantity;
     }
+
+    public void AddStock(int quantity)
+    {
+        RemainingStock = RemainingStock + quantity;
+    }
 }
 
 class CartItem
@@ -58,196 +65,137 @@ class CartItem
     }
 }
 
+class OrderHistory
+{
+    public int ReceiptNumber;
+    public DateTime OrderDate;
+    public double FinalTotal;
+    public double Payment;
+    public double Change;
+
+    public OrderHistory(int receiptNumber, DateTime orderDate, double finalTotal, double payment, double change)
+    {
+        ReceiptNumber = receiptNumber;
+        OrderDate = orderDate;
+        FinalTotal = finalTotal;
+        Payment = payment;
+        Change = change;
+    }
+}
+
 class Program
 {
     static void Main()
     {
         Product[] menu = new Product[6];
-        menu[0] = new Product(1, "Pork Liempo", 189.00, 50);
-        menu[1] = new Product(2, "Chicken Breast", 145.00, 40);
-        menu[2] = new Product(3, "Beef Bulalo Cut", 320.00, 30);
-        menu[3] = new Product(4, "Pork Ribs", 210.00, 25);
-        menu[4] = new Product(5, "Bangus", 99.00, 35);
-        menu[5] = new Product(6, "Chicken Thigh", 130.00, 45);
+        menu[0] = new Product(1, "Pork Liempo", 189.00, 50, "Pork");
+        menu[1] = new Product(2, "Chicken Breast", 145.00, 40, "Chicken");
+        menu[2] = new Product(3, "Beef Bulalo Cut", 320.00, 30, "Beef");
+        menu[3] = new Product(4, "Pork Ribs", 210.00, 6, "Pork");
+        menu[4] = new Product(5, "Bangus", 99.00, 4, "Seafood");
+        menu[5] = new Product(6, "Chicken Thigh", 130.00, 45, "Chicken");
 
         CartItem[] cart = new CartItem[10];
         int cartCount = 0;
-        string choice = "";
+
+        OrderHistory[] orderHistory = new OrderHistory[50];
+        int orderCount = 0;
+        int receiptNumber = 1;
+
+        Console.WriteLine("==============================================");
+        Console.WriteLine("       WELCOME TO LEIGH'S MEAT SHOP          ");
+        Console.WriteLine("==============================================");
+
+        string mainChoice = "";
 
         do
         {
-            Console.WriteLine("\n==============================================");
-            Console.WriteLine("                 MEAT SHOP MENU              ");
-            Console.WriteLine("==============================================");
-            Console.WriteLine(" ID   ITEM NAME           PRICE      STOCK");
-            Console.WriteLine("----------------------------------------------");
+            Console.WriteLine("\n============== MAIN MENU ==============");
+            Console.WriteLine(" [1] Browse & Add to Cart");
+            Console.WriteLine(" [2] Manage Cart");
+            Console.WriteLine(" [3] Exit");
+            Console.WriteLine("=======================================");
+            Console.Write("Enter choice: ");
 
-            for (int i = 0; i < menu.Length; i++)
+            string mainInput = Console.ReadLine();
+            int mainOpt;
+            bool mainValid = int.TryParse(mainInput, out mainOpt);
+
+            if (mainValid == false || mainOpt < 1 || mainOpt > 3)
             {
-                Console.WriteLine(
-                    menu[i].Id.ToString().PadRight(5) +
-                    menu[i].Name.PadRight(20) +
-                    ("PHP " + menu[i].Price.ToString("F2")).PadRight(12) +
-                    menu[i].RemainingStock
-                );
-            }
-
-            Console.WriteLine("==============================================");
-
-            Console.Write("\nEnter product number: ");
-            string productnum = Console.ReadLine();
-
-            int productId;
-            bool productvalid = int.TryParse(productnum, out productId);
-
-            if (productvalid == false)
-            {
-                Console.WriteLine("Invalid input. Please enter a number.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = Console.ReadLine().ToUpper();
+                Console.WriteLine("Invalid choice. Please enter 1 to 3.");
                 continue;
             }
 
-            Product selected = null;
-            for (int i = 0; i < menu.Length; i++)
+            if (mainOpt == 3)
             {
-                if (menu[i].Id == productId)
+                mainChoice = "EXIT";
+                continue;
+            }
+
+            if (mainOpt == 2)
+            {
+                bool stayInCart = true;
+                while (stayInCart == true)
                 {
-                    selected = menu[i];
+                    Console.WriteLine("\n========== CART MENU ==========");
+                    Console.WriteLine(" [1] View Cart");
+                    Console.WriteLine(" [2] Back to Main Menu");
+                    Console.WriteLine("================================");
+                    Console.Write("Enter choice: ");
+
+                    string cartInput = Console.ReadLine();
+                    int cartOpt;
+                    bool cartValid = int.TryParse(cartInput, out cartOpt);
+
+                    if (cartValid == false || cartOpt < 1 || cartOpt > 2)
+                    {
+                        Console.WriteLine("Invalid choice. Please enter 1 or 2.");
+                        continue;
+                    }
+
+                    if (cartOpt == 2)
+                    {
+                        stayInCart = false;
+                        continue;
+                    }
+
+                    if (cartOpt == 1)
+                    {
+                        Console.WriteLine("\n========== YOUR CART ==========");
+                        if (cartCount == 0)
+                        {
+                            Console.WriteLine(" Cart is empty.");
+                        }
+                        else
+                        {
+                            Console.WriteLine(" ID   ITEM NAME           QTY     SUBTOTAL");
+                            Console.WriteLine(" ------------------------------------------");
+                            for (int i = 0; i < cartCount; i++)
+                            {
+                                Console.WriteLine(
+                                    " " +
+                                    cart[i].Product.Id.ToString().PadRight(5) +
+                                    cart[i].Product.Name.PadRight(20) +
+                                    cart[i].Quantity.ToString().PadRight(8) +
+                                    "PHP " + cart[i].Subtotal.ToString("F2")
+                                );
+                            }
+                        }
+                        Console.WriteLine("================================");
+                        continue;
+                    }
                 }
-            }
-
-            if (selected == null)
-            {
-                Console.WriteLine("Product not found. Please try again.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = Console.ReadLine().ToUpper();
                 continue;
             }
 
-            if (selected.RemainingStock == 0)
+            if (mainOpt == 1)
             {
-                Console.WriteLine("Sorry, " + selected.Name + " is out of stock.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = Console.ReadLine().ToUpper();
-                continue;
+                Console.WriteLine("browse and add to cart next.");
             }
 
-            Console.Write("Enter quantity (available: " + selected.RemainingStock + "): ");
-            string qtyinput = Console.ReadLine();
+        } while (mainChoice != "EXIT");
 
-            int quantity;
-            bool validqty = int.TryParse(qtyinput, out quantity);
-
-            if (validqty == false)
-            {
-                Console.WriteLine("Invalid input. Please enter a number.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = Console.ReadLine().ToUpper();
-                continue;
-            }
-
-            if (quantity <= 0)
-            {
-                Console.WriteLine("Quantity must be greater than zero.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = Console.ReadLine().ToUpper();
-                continue;
-            }
-
-            if (selected.HasEnoughStock(quantity) == false)
-            {
-                Console.WriteLine("Not enough stock available. Only " + selected.RemainingStock + " left.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = Console.ReadLine().ToUpper();
-                continue;
-            }
-            int existingIndex = -1;
-
-            for (int i = 0; i < cartCount; i++)
-            {
-                if (cart[i].Product.Id == selected.Id)
-                {
-                    existingIndex = i;
-                    break;
-                }
-            }
-
-            if (existingIndex >= 0)
-            {
-                cart[existingIndex].Quantity += quantity;
-                cart[existingIndex].Subtotal =
-                    cart[existingIndex].Product.Price * cart[existingIndex].Quantity;
-            }
-            else
-            {
-                if (cartCount >= cart.Length)
-                {
-                    Console.WriteLine("Cart is full!");
-                    break;
-                }
-
-                cart[cartCount] = new CartItem(selected, quantity);
-                cartCount++;
-            }
-
-            selected.DeductStock(quantity);
-
-            Console.WriteLine("Item added to cart successfully!");
-            Console.Write("Continue shopping? (Y/N): ");
-            choice = Console.ReadLine().ToUpper();
-
-        } while (choice == "Y");
-
-        Console.WriteLine("\n==============================================");
-        Console.WriteLine("                   RECEIPT                  ");
-        Console.WriteLine("==============================================");
-        Console.WriteLine(" ITEM NAME        QTY     PRICE     SUBTOTAL");
-        Console.WriteLine("----------------------------------------------");
-
-        double grandTotal = 0;
-
-        if (cartCount == 0)
-        {
-            Console.WriteLine(" Your cart is empty.");
-        }
-        else
-        {
-            for (int i = 0; i < cartCount; i++)
-            {
-                Console.WriteLine(
-                    cart[i].Product.Name.PadRight(18) +
-                    cart[i].Quantity.ToString().PadRight(8) +
-                    ("PHP " + cart[i].Product.Price.ToString("F2")).PadRight(11) +
-                    ("PHP " + cart[i].Subtotal.ToString("F2"))
-                );
-
-                grandTotal += cart[i].Subtotal;
-            }
-        }
-
-        Console.WriteLine("----------------------------------------------");
-        Console.WriteLine(" TOTAL:".PadRight(35) + "PHP " + grandTotal.ToString("F2"));
-
-        double discount = 0;
-        double finalTotal = grandTotal;
-
-        if (grandTotal >= 5000)
-        {
-            discount = grandTotal * 0.10;
-            finalTotal = grandTotal - discount;
-            Console.WriteLine(" DISCOUNT (10%):".PadRight(35) + "-PHP " + discount.ToString("F2"));
-        }
-
-        Console.WriteLine(" FINAL TOTAL:".PadRight(35) + "PHP " + finalTotal.ToString("F2"));
-        Console.WriteLine("==============================================");
-
-        Console.WriteLine("\n--- Updated Stock ---");
-        for (int i = 0; i < menu.Length; i++)
-        {
-            menu[i].DisplayProduct();
-        }
-
-        Console.WriteLine("\nThank you for shopping!");
+        Console.WriteLine("\nGoodbye! Thank you for visiting Leigh's Meat Shop!");
     }
 }
