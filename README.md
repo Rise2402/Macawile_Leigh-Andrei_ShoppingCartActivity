@@ -16,9 +16,65 @@ I used AI because some parts of my project were difficult to figure out on my ow
 Prompts/questions I asked
 
 • How do I start a C# shopping cart project, and what should the basic structure look like?
+
 • I’m confused about how to use a class inside another class like Product inside CartItem.
+
 • How do I use int.TryParse properly for input validation?
+
 • (Pasted the code) I am having an issue where my cart is creating duplicate items instead of updating the quantity can you help me?
+
 • How do I loop through an array to display all products in a menu?
+
 • (Pasted the code) I was thinking about how I could make my menu and receipt look better and more presentable almost like a real shopping system can you help me?
 
+"AI USAGE IN PART 2"
+
+I used AI to improve specific features in my program. First, I learned how to add a Category field to my Product class and use it to filter products by category. This helped me understand how to use a string field to group and display related items. Next, I used AI to learn how to properly remove an item from an array and shift the remaining items to fill the gap so there are no empty slots in the middle of my cart. This helped me understand how array manipulation works when deleting elements. I also used AI to learn how to add a new method AddStock() to my Product class to restore stock when items are removed or updated in the cart. Next, I asked AI how to keep asking the user for payment using a loop until the amount entered is enough to cover the final total. This allowed me to properly complete the checkout feature. I also used AI to learn how to get the current date and time using DateTime.Now and how to format it to display nicely on the receipt. Lastly, I asked AI to review my program for possible bugs especially in the stock update logic when the user changes the quantity of an item already in the cart. Through this, I became more aware of how restoring and re-deducting stock correctly requires saving the old quantity first before applying the new one.
+
+Prompts/questions I asked:
+
+"How do I add a Category field to a class and filter an array by it in C#? (then I pasted my code)"
+
+"How do I remove an item from an array and shift the remaining elements to fill the gap? (then I pasted my code)"
+
+"How do I restore stock when a cart item is removed or updated?"
+
+"How do I add a new method to an existing class in C#?"
+
+"How do I keep looping until the user enters a valid payment amount in C#?"
+
+"How do I get the current date and time in C# and display it on a receipt?"
+
+"How do I format the date and time to look like April 30, 2026 08:30 PM?"
+
+"How do I store completed orders in an array and display them later? (then I pasted my code)"
+
+"How do I make a Y/N prompt keep asking until the user types Y or N only?"
+
+"How do I display a receipt number that always shows 4 digits like 0001?"
+
+"How do I check if a product is already in my cart and update it instead of adding a duplicate? (then I pasted my code)"
+
+"Is there any bug in my stock update logic when the user changes quantity? (then I pasted my code)"
+
+Changes I made after using AI:
+
+-Added Category field to the Product class and updated all products with their correct categories
+
+-Added AddStock() method to the Product class to properly restore stock when items are removed or updated
+
+-Implemented the remove item feature with array shifting to avoid empty gaps in the cart
+
+-Fixed the update quantity logic to restore the old stock first before deducting the new amount
+
+-Added a payment validation loop that keeps prompting until the amount entered is enough
+
+-Added DateTime.Now with proper formatting to display the date and time on each receipt
+
+-Added receipt number formatting using ToString("D4") so it always shows as 0001, 0002, etc.
+
+-Added order history that saves each completed transaction and displays it when requested
+
+-Improved all Y/N prompts to strictly re-ask until the user enters only Y or N
+
+-Fixed potential stock issues when the same product is added to the cart multiple times
