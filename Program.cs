@@ -439,7 +439,7 @@ class Program
                         }
                         cartCount = 0;
 
-                        Console.WriteLine("\nThank you for shopping at Kasamas Meat Shop!");
+                        Console.WriteLine("\nThank you for shopping at Leigh's Meat Shop!");
                         stayInCart = false;
                         continue;
                     }
@@ -449,12 +449,210 @@ class Program
 
             if (mainOpt == 2)
             {
-                Console.WriteLine("SEARCH BY NAME SUNOD.");
+                Console.Write("Enter product name to search: ");
+                string searchInput = Console.ReadLine().ToLower();
+
+                bool found = false;
+                Console.WriteLine("\n--- Search Results ---");
+                for (int i = 0; i < menu.Length; i++)
+                {
+                    if (menu[i].Name.ToLower().Contains(searchInput))
+                    {
+                        menu[i].DisplayProduct();
+                        found = true;
+                    }
+                }
+
+                if (found == false)
+                {
+                    Console.WriteLine(" No products found matching \"" + searchInput + "\".");
+                }
+                continue;
+            }
+
+            if (mainOpt == 3)
+            {
+                Console.WriteLine("\n--- Categories ---");
+                Console.WriteLine(" [1] Pork");
+                Console.WriteLine(" [2] Chicken");
+                Console.WriteLine(" [3] Beef");
+                Console.WriteLine(" [4] Seafood");
+                Console.Write("Enter category number: ");
+
+                string catInput = Console.ReadLine();
+                int catOpt;
+                bool catValid = int.TryParse(catInput, out catOpt);
+
+                string catName = "";
+                if (catValid == true && catOpt == 1) catName = "Pork";
+                else if (catValid == true && catOpt == 2) catName = "Chicken";
+                else if (catValid == true && catOpt == 3) catName = "Beef";
+                else if (catValid == true && catOpt == 4) catName = "Seafood";
+                else
+                {
+                    Console.WriteLine("Invalid category.");
+                    continue;
+                }
+
+                Console.WriteLine("\n--- " + catName + " Products ---");
+                bool catFound = false;
+                for (int i = 0; i < menu.Length; i++)
+                {
+                    if (menu[i].Category == catName)
+                    {
+                        menu[i].DisplayProduct();
+                        catFound = true;
+                    }
+                }
+
+                if (catFound == false)
+                {
+                    Console.WriteLine(" No products in this category.");
+                }
+                continue;
+            }
+
+            if (mainOpt == 1)
+            {
+                string addChoice = "";
+                do
+                {
+                    Console.WriteLine("\n==============================================");
+                    Console.WriteLine("                 MEAT SHOP MENU              ");
+                    Console.WriteLine("==============================================");
+                    Console.WriteLine(" ID   ITEM NAME           PRICE      STOCK    CATEGORY");
+                    Console.WriteLine("-------------------------------------------------------");
+
+                    for (int i = 0; i < menu.Length; i++)
+                    {
+                        Console.WriteLine(
+                            menu[i].Id.ToString().PadRight(5) +
+                            menu[i].Name.PadRight(20) +
+                            ("PHP " + menu[i].Price.ToString("F2")).PadRight(12) +
+                            menu[i].RemainingStock.ToString().PadRight(9) +
+                            menu[i].Category
+                        );
+                    }
+                    Console.WriteLine("==============================================");
+
+                    Console.Write("\nEnter product number: ");
+                    string productnum = Console.ReadLine();
+
+                    int productId;
+                    bool productvalid = int.TryParse(productnum, out productId);
+
+                    if (productvalid == false)
+                    {
+                        Console.WriteLine("Invalid input. Please enter a number.");
+                        addChoice = AskYesNo("Continue shopping? (Y/N): ");
+                        continue;
+                    }
+
+                    Product selected = null;
+                    for (int i = 0; i < menu.Length; i++)
+                    {
+                        if (menu[i].Id == productId)
+                        {
+                            selected = menu[i];
+                        }
+                    }
+
+                    if (selected == null)
+                    {
+                        Console.WriteLine("Product not found. Please try again.");
+                        addChoice = AskYesNo("Continue shopping? (Y/N): ");
+                        continue;
+                    }
+
+                    if (selected.RemainingStock == 0)
+                    {
+                        Console.WriteLine("Sorry, " + selected.Name + " is out of stock.");
+                        addChoice = AskYesNo("Continue shopping? (Y/N): ");
+                        continue;
+                    }
+
+                    Console.Write("Enter quantity (available: " + selected.RemainingStock + "): ");
+                    string qtyinput = Console.ReadLine();
+
+                    int quantity;
+                    bool validqty = int.TryParse(qtyinput, out quantity);
+
+                    if (validqty == false)
+                    {
+                        Console.WriteLine("Invalid input. Please enter a number.");
+                        addChoice = AskYesNo("Continue shopping? (Y/N): ");
+                        continue;
+                    }
+
+                    if (quantity <= 0)
+                    {
+                        Console.WriteLine("Quantity must be greater than zero.");
+                        addChoice = AskYesNo("Continue shopping? (Y/N): ");
+                        continue;
+                    }
+
+                    if (selected.HasEnoughStock(quantity) == false)
+                    {
+                        Console.WriteLine("Not enough stock available. Only " + selected.RemainingStock + " left.");
+                        addChoice = AskYesNo("Continue shopping? (Y/N): ");
+                        continue;
+                    }
+
+                    int existingIndex = -1;
+                    for (int i = 0; i < cartCount; i++)
+                    {
+                        if (cart[i].Product.Id == selected.Id)
+                        {
+                            existingIndex = i;
+                            break;
+                        }
+                    }
+
+                    if (existingIndex >= 0)
+                    {
+                        cart[existingIndex].Quantity = cart[existingIndex].Quantity + quantity;
+                        cart[existingIndex].Subtotal = cart[existingIndex].Product.Price * cart[existingIndex].Quantity;
+                        Console.WriteLine(selected.Name + " updated in cart. New qty: " + cart[existingIndex].Quantity);
+                    }
+                    else
+                    {
+                        if (cartCount >= cart.Length)
+                        {
+                            Console.WriteLine("Cart is full!");
+                            addChoice = AskYesNo("Continue shopping? (Y/N): ");
+                            continue;
+                        }
+
+                        cart[cartCount] = new CartItem(selected, quantity);
+                        cartCount = cartCount + 1;
+                        Console.WriteLine(selected.Name + " added to cart!");
+                    }
+
+                    selected.DeductStock(quantity);
+
+                    addChoice = AskYesNo("Add another item? (Y/N): ");
+
+                } while (addChoice == "Y");
             }
 
         } while (mainChoice != "EXIT");
 
         Console.WriteLine("\nGoodbye! Thank you for visiting Leigh's Meat Shop!");
+    }
+
+    static string AskYesNo(string prompt)
+    {
+        string input = "";
+        while (input != "Y" && input != "N")
+        {
+            Console.Write(prompt);
+            input = Console.ReadLine().ToUpper();
+            if (input != "Y" && input != "N")
+            {
+                Console.WriteLine("Invalid input. Please enter Y or N only.");
+            }
+        }
+        return input;
     }
 
     static void ShowCart(CartItem[] cart, int cartCount)
