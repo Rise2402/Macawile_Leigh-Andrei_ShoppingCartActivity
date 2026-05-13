@@ -2,103 +2,228 @@ using System;
 
 class Product
 {
-    public int Id;
-    public string Name;
-    public double Price;
-    public int RemainingStock;
-    public string Category;
+    private int id;
+    private string name;
+    private double price;
+    private int remainingStock;
+    private string category;
 
     public Product(int id, string name, double price, int stock, string category)
     {
-        Id = id;
-        Name = name;
-        Price = price;
-        RemainingStock = stock;
-        Category = category;
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.remainingStock = stock;
+        this.category = category;
     }
 
-    public void DisplayProduct()
+    public int getId()
     {
-        Console.WriteLine("  [" + Id + "] " + Name + "  -  PHP " + Price.ToString("F2") + "  (Stock: " + RemainingStock + ")  [" + Category + "]");
+        return id;
     }
 
-    public double GetItemTotal(int quantity)
+    public void setId(int id)
     {
-        return Price * quantity;
+        this.id = id;
     }
 
-    public bool HasEnoughStock(int quantity)
+    public string getName()
     {
-        return RemainingStock >= quantity;
+        return name;
     }
 
-    public void DeductStock(int quantity)
+    public void setName(string name)
     {
-        RemainingStock -= quantity;
+        this.name = name;
     }
 
-    public void AddStock(int quantity)
+    public double getPrice()
     {
-        RemainingStock = RemainingStock + quantity;
+        return price;
+    }
+
+    public void setPrice(double price)
+    {
+        this.price = price;
+    }
+
+    public int getRemainingStock()
+    {
+        return remainingStock;
+    }
+
+    public void setRemainingStock(int remainingStock)
+    {
+        this.remainingStock = remainingStock;
+    }
+
+    public string getCategory()
+    {
+        return category;
+    }
+
+    public void setCategory(string category)
+    {
+        this.category = category;
+    }
+
+    public void displayProduct()
+    {
+        Console.WriteLine("  [" + getId() + "] " + getName() + "  -  PHP " + getPrice().ToString("F2") + "  (Stock: " + getRemainingStock() + ")  [" + getCategory() + "]");
+    }
+
+    public double getItemTotal(int quantity)
+    {
+        double total = getPrice() * quantity;
+        return total;
+    }
+
+    public bool hasEnoughStock(int quantity)
+    {
+        if (getRemainingStock() >= quantity)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void deductStock(int quantity)
+    {
+        setRemainingStock(getRemainingStock() - quantity);
+    }
+
+    public void addStock(int quantity)
+    {
+        setRemainingStock(getRemainingStock() + quantity);
     }
 }
 
 class CartItem
 {
-    public Product Product;
-    public int Quantity;
-    public double Subtotal;
+    private Product product;
+    private int quantity;
+    private double subtotal;
 
     public CartItem(Product product, int quantity)
     {
-        Product = product;
-        Quantity = quantity;
-        Subtotal = product.Price * quantity;
+        this.product = product;
+        this.quantity = quantity;
+        this.subtotal = product.getPrice() * quantity;
+    }
+
+    public Product getProduct()
+    {
+        return product;
+    }
+
+    public void setProduct(Product product)
+    {
+        this.product = product;
+    }
+
+    public int getQuantity()
+    {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity)
+    {
+        this.quantity = quantity;
+    }
+
+    public double getSubtotal()
+    {
+        return subtotal;
+    }
+
+    public void setSubtotal(double subtotal)
+    {
+        this.subtotal = subtotal;
     }
 }
 
 class OrderHistory
 {
-    public int ReceiptNumber;
-    public DateTime OrderDate;
-    public double FinalTotal;
-    public double Payment;
-    public double Change;
+    private int receiptNumber;
+    private DateTime orderDate;
+    private double finalTotal;
+    private double payment;
+    private double change;
 
     public OrderHistory(int receiptNumber, DateTime orderDate, double finalTotal, double payment, double change)
     {
-        ReceiptNumber = receiptNumber;
-        OrderDate = orderDate;
-        FinalTotal = finalTotal;
-        Payment = payment;
-        Change = change;
+        this.receiptNumber = receiptNumber;
+        this.orderDate = orderDate;
+        this.finalTotal = finalTotal;
+        this.payment = payment;
+        this.change = change;
+    }
+
+    public int getReceiptNumber()
+    {
+        return receiptNumber;
+    }
+
+    public void setReceiptNumber(int receiptNumber)
+    {
+        this.receiptNumber = receiptNumber;
+    }
+
+    public DateTime getOrderDate()
+    {
+        return orderDate;
+    }
+
+    public void setOrderDate(DateTime orderDate)
+    {
+        this.orderDate = orderDate;
+    }
+
+    public double getFinalTotal()
+    {
+        return finalTotal;
+    }
+
+    public void setFinalTotal(double finalTotal)
+    {
+        this.finalTotal = finalTotal;
+    }
+
+    public double getPayment()
+    {
+        return payment;
+    }
+
+    public void setPayment(double payment)
+    {
+        this.payment = payment;
+    }
+
+    public double getChange()
+    {
+        return change;
+    }
+
+    public void setChange(double change)
+    {
+        this.change = change;
     }
 }
 
 class Program
 {
-    static string GetYesNo()
-    {
-        string input = Console.ReadLine().ToUpper();
-
-        while (input != "Y" && input != "N")
-        {
-            Console.Write("Invalid input. Enter Y or N only: ");
-            input = Console.ReadLine().ToUpper();
-        }
-
-        return input;
-    }
-
     static void Main()
     {
         Product[] menu = new Product[6];
-        menu[0] = new Product(1, "Pork Liempo", 189.00, 50, "Pork");
-        menu[1] = new Product(2, "Chicken Breast", 145.00, 40, "Chicken");
+        menu[0] = new Product(1, "Pork Liempo",     189.00, 50, "Pork");
+        menu[1] = new Product(2, "Chicken Breast",  145.00, 40, "Chicken");
         menu[2] = new Product(3, "Beef Bulalo Cut", 320.00, 30, "Beef");
-        menu[3] = new Product(4, "Pork Ribs", 210.00, 6, "Pork");
-        menu[4] = new Product(5, "Bangus", 99.00, 4, "Seafood");
-        menu[5] = new Product(6, "Chicken Thigh", 130.00, 45, "Chicken");
+        menu[3] = new Product(4, "Pork Ribs",       210.00,  6, "Pork");
+        menu[4] = new Product(5, "Bangus",           99.00,  4, "Seafood");
+        menu[5] = new Product(6, "Chicken Thigh",   130.00, 45, "Chicken");
 
         CartItem[] cart = new CartItem[10];
         int cartCount = 0;
@@ -138,19 +263,6 @@ class Program
             if (mainOpt == 6)
             {
                 mainChoice = "EXIT";
-            Console.WriteLine("==============================================");
-
-            Console.Write("\nEnter product number: ");
-            string productnum = Console.ReadLine();
-
-            int productId;
-            bool productvalid = int.TryParse(productnum, out productId);
-
-            if (!productvalid)
-            {
-                Console.WriteLine("Invalid input. Please enter a number.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = GetYesNo();
                 continue;
             }
 
@@ -166,20 +278,13 @@ class Program
                     for (int i = 0; i < orderCount; i++)
                     {
                         Console.WriteLine(
-                            " Receipt #" + orderHistory[i].ReceiptNumber.ToString("D4") +
-                            "  |  " + orderHistory[i].OrderDate.ToString("MMMM dd, yyyy hh:mm tt") +
-                            "  |  Final Total: PHP " + orderHistory[i].FinalTotal.ToString("F2")
+                            " Receipt #" + orderHistory[i].getReceiptNumber().ToString("D4") +
+                            "  |  " + orderHistory[i].getOrderDate().ToString("MMMM dd, yyyy hh:mm tt") +
+                            "  |  Final Total: PHP " + orderHistory[i].getFinalTotal().ToString("F2")
                         );
                     }
                 }
                 Console.WriteLine("====================================");
-            }
-
-            if (selected == null)
-            {
-                Console.WriteLine("Product not found. Please try again.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = GetYesNo();
                 continue;
             }
 
@@ -242,7 +347,7 @@ class Program
                         int updateIndex = -1;
                         for (int i = 0; i < cartCount; i++)
                         {
-                            if (cart[i].Product.Id == updateId)
+                            if (cart[i].getProduct().getId() == updateId)
                             {
                                 updateIndex = i;
                             }
@@ -254,7 +359,8 @@ class Program
                             continue;
                         }
 
-                        Console.Write("Enter new quantity (available stock: " + (cart[updateIndex].Product.RemainingStock + cart[updateIndex].Quantity) + "): ");
+                        int totalAvailable = cart[updateIndex].getProduct().getRemainingStock() + cart[updateIndex].getQuantity();
+                        Console.Write("Enter new quantity (available stock: " + totalAvailable + "): ");
                         string newQtyInput = Console.ReadLine();
                         int newQty;
                         bool newQtyValid = int.TryParse(newQtyInput, out newQty);
@@ -265,18 +371,16 @@ class Program
                             continue;
                         }
 
-                        int totalAvailable = cart[updateIndex].Product.RemainingStock + cart[updateIndex].Quantity;
-
                         if (newQty > totalAvailable)
                         {
                             Console.WriteLine("Not enough stock. Maximum available: " + totalAvailable);
                             continue;
                         }
 
-                        cart[updateIndex].Product.RemainingStock = cart[updateIndex].Product.RemainingStock + cart[updateIndex].Quantity;
-                        cart[updateIndex].Product.RemainingStock = cart[updateIndex].Product.RemainingStock - newQty;
-                        cart[updateIndex].Quantity = newQty;
-                        cart[updateIndex].Subtotal = cart[updateIndex].Product.Price * newQty;
+                        cart[updateIndex].getProduct().setRemainingStock(cart[updateIndex].getProduct().getRemainingStock() + cart[updateIndex].getQuantity());
+                        cart[updateIndex].getProduct().setRemainingStock(cart[updateIndex].getProduct().getRemainingStock() - newQty);
+                        cart[updateIndex].setQuantity(newQty);
+                        cart[updateIndex].setSubtotal(cart[updateIndex].getProduct().getPrice() * newQty);
 
                         Console.WriteLine("Quantity updated successfully!");
                         continue;
@@ -304,7 +408,7 @@ class Program
                         int removeIndex = -1;
                         for (int i = 0; i < cartCount; i++)
                         {
-                            if (cart[i].Product.Id == removeId)
+                            if (cart[i].getProduct().getId() == removeId)
                             {
                                 removeIndex = i;
                             }
@@ -316,7 +420,7 @@ class Program
                             continue;
                         }
 
-                        cart[removeIndex].Product.RemainingStock = cart[removeIndex].Product.RemainingStock + cart[removeIndex].Quantity;
+                        cart[removeIndex].getProduct().setRemainingStock(cart[removeIndex].getProduct().getRemainingStock() + cart[removeIndex].getQuantity());
 
                         for (int i = removeIndex; i < cartCount - 1; i++)
                         {
@@ -346,7 +450,7 @@ class Program
                         {
                             for (int i = 0; i < cartCount; i++)
                             {
-                                cart[i].Product.RemainingStock = cart[i].Product.RemainingStock + cart[i].Quantity;
+                                cart[i].getProduct().setRemainingStock(cart[i].getProduct().getRemainingStock() + cart[i].getQuantity());
                                 cart[i] = null;
                             }
                             cartCount = 0;
@@ -366,7 +470,7 @@ class Program
                         double grandTotal = 0;
                         for (int i = 0; i < cartCount; i++)
                         {
-                            grandTotal = grandTotal + cart[i].Subtotal;
+                            grandTotal = grandTotal + cart[i].getSubtotal();
                         }
 
                         double discount = 0;
@@ -416,10 +520,10 @@ class Program
                         for (int i = 0; i < cartCount; i++)
                         {
                             Console.WriteLine(
-                                cart[i].Product.Name.PadRight(18) +
-                                cart[i].Quantity.ToString().PadRight(8) +
-                                ("PHP " + cart[i].Product.Price.ToString("F2")).PadRight(11) +
-                                ("PHP " + cart[i].Subtotal.ToString("F2"))
+                                cart[i].getProduct().getName().PadRight(18) +
+                                cart[i].getQuantity().ToString().PadRight(8) +
+                                ("PHP " + cart[i].getProduct().getPrice().ToString("F2")).PadRight(11) +
+                                ("PHP " + cart[i].getSubtotal().ToString("F2"))
                             );
                         }
 
@@ -443,14 +547,14 @@ class Program
                         bool hasLowStock = false;
                         for (int i = 0; i < menu.Length; i++)
                         {
-                            if (menu[i].RemainingStock <= 5)
+                            if (menu[i].getRemainingStock() <= 5)
                             {
                                 if (hasLowStock == false)
                                 {
                                     Console.WriteLine("\n========== LOW STOCK ALERT ==========");
                                     hasLowStock = true;
                                 }
-                                Console.WriteLine(" WARNING: " + menu[i].Name + " has only " + menu[i].RemainingStock + " stock(s) left!");
+                                Console.WriteLine(" WARNING: " + menu[i].getName() + " has only " + menu[i].getRemainingStock() + " stock(s) left!");
                             }
                         }
                         if (hasLowStock == true)
@@ -481,9 +585,9 @@ class Program
                 Console.WriteLine("\n--- Search Results ---");
                 for (int i = 0; i < menu.Length; i++)
                 {
-                    if (menu[i].Name.ToLower().Contains(searchInput))
+                    if (menu[i].getName().ToLower().Contains(searchInput))
                     {
-                        menu[i].DisplayProduct();
+                        menu[i].displayProduct();
                         found = true;
                     }
                 }
@@ -494,43 +598,6 @@ class Program
                 }
                 continue;
             }
-                Console.WriteLine("Sorry, " + selected.Name + " is out of stock.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = GetYesNo();
-                continue;
-            }
-
-            Console.Write("Enter quantity (available: " + selected.RemainingStock + "): ");
-            string qtyinput = Console.ReadLine();
-
-            int quantity;
-            bool validqty = int.TryParse(qtyinput, out quantity);
-
-            if (!validqty)
-            {
-                Console.WriteLine("Invalid input. Please enter a number.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = GetYesNo();
-                continue;
-            }
-
-            if (quantity <= 0)
-            {
-                Console.WriteLine("Quantity must be greater than zero.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = GetYesNo();
-                continue;
-            }
-
-            if (!selected.HasEnoughStock(quantity))
-            {
-                Console.WriteLine("Not enough stock available. Only " + selected.RemainingStock + " left.");
-                Console.Write("Continue shopping? (Y/N): ");
-                choice = GetYesNo();
-                continue;
-            }
-
-            int existingIndex = -1;
 
             if (mainOpt == 3)
             {
@@ -560,9 +627,9 @@ class Program
                 bool catFound = false;
                 for (int i = 0; i < menu.Length; i++)
                 {
-                    if (menu[i].Category == catName)
+                    if (menu[i].getCategory() == catName)
                     {
-                        menu[i].DisplayProduct();
+                        menu[i].displayProduct();
                         catFound = true;
                     }
                 }
@@ -588,11 +655,11 @@ class Program
                     for (int i = 0; i < menu.Length; i++)
                     {
                         Console.WriteLine(
-                            menu[i].Id.ToString().PadRight(5) +
-                            menu[i].Name.PadRight(20) +
-                            ("PHP " + menu[i].Price.ToString("F2")).PadRight(12) +
-                            menu[i].RemainingStock.ToString().PadRight(9) +
-                            menu[i].Category
+                            menu[i].getId().ToString().PadRight(5) +
+                            menu[i].getName().PadRight(20) +
+                            ("PHP " + menu[i].getPrice().ToString("F2")).PadRight(12) +
+                            menu[i].getRemainingStock().ToString().PadRight(9) +
+                            menu[i].getCategory()
                         );
                     }
                     Console.WriteLine("==============================================");
@@ -613,7 +680,7 @@ class Program
                     Product selected = null;
                     for (int i = 0; i < menu.Length; i++)
                     {
-                        if (menu[i].Id == productId)
+                        if (menu[i].getId() == productId)
                         {
                             selected = menu[i];
                         }
@@ -626,14 +693,14 @@ class Program
                         continue;
                     }
 
-                    if (selected.RemainingStock == 0)
+                    if (selected.getRemainingStock() == 0)
                     {
-                        Console.WriteLine("Sorry, " + selected.Name + " is out of stock.");
+                        Console.WriteLine("Sorry, " + selected.getName() + " is out of stock.");
                         addChoice = AskYesNo("Continue shopping? (Y/N): ");
                         continue;
                     }
 
-                    Console.Write("Enter quantity (available: " + selected.RemainingStock + "): ");
+                    Console.Write("Enter quantity (available: " + selected.getRemainingStock() + "): ");
                     string qtyinput = Console.ReadLine();
 
                     int quantity;
@@ -653,9 +720,9 @@ class Program
                         continue;
                     }
 
-                    if (selected.HasEnoughStock(quantity) == false)
+                    if (selected.hasEnoughStock(quantity) == false)
                     {
-                        Console.WriteLine("Not enough stock available. Only " + selected.RemainingStock + " left.");
+                        Console.WriteLine("Not enough stock available. Only " + selected.getRemainingStock() + " left.");
                         addChoice = AskYesNo("Continue shopping? (Y/N): ");
                         continue;
                     }
@@ -663,7 +730,7 @@ class Program
                     int existingIndex = -1;
                     for (int i = 0; i < cartCount; i++)
                     {
-                        if (cart[i].Product.Id == selected.Id)
+                        if (cart[i].getProduct().getId() == selected.getId())
                         {
                             existingIndex = i;
                             break;
@@ -672,9 +739,9 @@ class Program
 
                     if (existingIndex >= 0)
                     {
-                        cart[existingIndex].Quantity = cart[existingIndex].Quantity + quantity;
-                        cart[existingIndex].Subtotal = cart[existingIndex].Product.Price * cart[existingIndex].Quantity;
-                        Console.WriteLine(selected.Name + " updated in cart. New qty: " + cart[existingIndex].Quantity);
+                        cart[existingIndex].setQuantity(cart[existingIndex].getQuantity() + quantity);
+                        cart[existingIndex].setSubtotal(cart[existingIndex].getProduct().getPrice() * cart[existingIndex].getQuantity());
+                        Console.WriteLine(selected.getName() + " updated in cart. New qty: " + cart[existingIndex].getQuantity());
                     }
                     else
                     {
@@ -687,20 +754,15 @@ class Program
 
                         cart[cartCount] = new CartItem(selected, quantity);
                         cartCount = cartCount + 1;
-                        Console.WriteLine(selected.Name + " added to cart!");
+                        Console.WriteLine(selected.getName() + " added to cart!");
                     }
 
-                    selected.DeductStock(quantity);
+                    selected.deductStock(quantity);
 
                     addChoice = AskYesNo("Add another item? (Y/N): ");
 
                 } while (addChoice == "Y");
             }
-            selected.DeductStock(quantity);
-
-            Console.WriteLine("Item added to cart successfully!");
-            Console.Write("Continue shopping? (Y/N): ");
-            choice = GetYesNo();
 
         } while (mainChoice != "EXIT");
 
@@ -737,14 +799,13 @@ class Program
             {
                 Console.WriteLine(
                     " " +
-                    cart[i].Product.Id.ToString().PadRight(5) +
-                    cart[i].Product.Name.PadRight(20) +
-                    cart[i].Quantity.ToString().PadRight(8) +
-                    "PHP " + cart[i].Subtotal.ToString("F2")
+                    cart[i].getProduct().getId().ToString().PadRight(5) +
+                    cart[i].getProduct().getName().PadRight(20) +
+                    cart[i].getQuantity().ToString().PadRight(8) +
+                    "PHP " + cart[i].getSubtotal().ToString("F2")
                 );
             }
         }
         Console.WriteLine("================================");
     }
 }
-
