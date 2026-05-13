@@ -24,25 +24,17 @@ class Product
 
     public double GetItemTotal(int quantity)
     {
-        double total = Price * quantity;
-        return total;
+        return Price * quantity;
     }
 
     public bool HasEnoughStock(int quantity)
     {
-        if (RemainingStock >= quantity)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return RemainingStock >= quantity;
     }
 
     public void DeductStock(int quantity)
     {
-        RemainingStock = RemainingStock - quantity;
+        RemainingStock -= quantity;
     }
 
     public void AddStock(int quantity)
@@ -85,6 +77,19 @@ class OrderHistory
 
 class Program
 {
+    static string GetYesNo()
+    {
+        string input = Console.ReadLine().ToUpper();
+
+        while (input != "Y" && input != "N")
+        {
+            Console.Write("Invalid input. Enter Y or N only: ");
+            input = Console.ReadLine().ToUpper();
+        }
+
+        return input;
+    }
+
     static void Main()
     {
         Product[] menu = new Product[6];
@@ -133,6 +138,19 @@ class Program
             if (mainOpt == 6)
             {
                 mainChoice = "EXIT";
+            Console.WriteLine("==============================================");
+
+            Console.Write("\nEnter product number: ");
+            string productnum = Console.ReadLine();
+
+            int productId;
+            bool productvalid = int.TryParse(productnum, out productId);
+
+            if (!productvalid)
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = GetYesNo();
                 continue;
             }
 
@@ -155,6 +173,13 @@ class Program
                     }
                 }
                 Console.WriteLine("====================================");
+            }
+
+            if (selected == null)
+            {
+                Console.WriteLine("Product not found. Please try again.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = GetYesNo();
                 continue;
             }
 
@@ -469,6 +494,43 @@ class Program
                 }
                 continue;
             }
+                Console.WriteLine("Sorry, " + selected.Name + " is out of stock.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = GetYesNo();
+                continue;
+            }
+
+            Console.Write("Enter quantity (available: " + selected.RemainingStock + "): ");
+            string qtyinput = Console.ReadLine();
+
+            int quantity;
+            bool validqty = int.TryParse(qtyinput, out quantity);
+
+            if (!validqty)
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = GetYesNo();
+                continue;
+            }
+
+            if (quantity <= 0)
+            {
+                Console.WriteLine("Quantity must be greater than zero.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = GetYesNo();
+                continue;
+            }
+
+            if (!selected.HasEnoughStock(quantity))
+            {
+                Console.WriteLine("Not enough stock available. Only " + selected.RemainingStock + " left.");
+                Console.Write("Continue shopping? (Y/N): ");
+                choice = GetYesNo();
+                continue;
+            }
+
+            int existingIndex = -1;
 
             if (mainOpt == 3)
             {
@@ -634,6 +696,11 @@ class Program
 
                 } while (addChoice == "Y");
             }
+            selected.DeductStock(quantity);
+
+            Console.WriteLine("Item added to cart successfully!");
+            Console.Write("Continue shopping? (Y/N): ");
+            choice = GetYesNo();
 
         } while (mainChoice != "EXIT");
 
